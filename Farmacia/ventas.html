@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario en Tiempo Real</title>
+  <style>
+    table { width: 80%; margin: 30px auto; border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 10px; text-align: center; }
+    th { background-color: #333; color: white; }
+  </style>
+</head>
+<body>
+    <h1>Registra tus ventas</h1>
+        <form action="REventas.php" method="post">
+            <label for="idventas">Id Venta:</label>
+            <input type="text" id="idventas" name="idventas" required><br><br>
+
+            <label for="Fecha">Fecha:</label>
+            <input type="date" id="Fecha" name="Fecha" required><br><br>
+
+            <label for="Id_cliente">Id Cliente:</label>
+            <input type="text" id="Id_cliente" name="Id_cliente" required><br><br>
+
+            <label for="NobreCliente">Nombre Cliente:</label>
+            <input type="text" id="NobreCliente" name="NobreCliente" required><br><br>
+
+            <label for="Id_producto">Id Producto:</label>
+            <input type="text" id="Id_producto" name="Id_producto" required><br><br>
+
+            <label for="DescProducto">Descripcion Producto:</label>
+            <input type="text" id="DescProducto" name="DescProducto" required><br><br>
+
+            <label for="Cantidad">Cantidad:</label>
+            <input type="text" id="Cantidad" name="Cantidad" required><br><br>
+
+            <label for="Precio">Precio:</label>
+            <input type="text" id="Precio" name="Precio" required><br><br>
+
+            <label for="Total">Total:</label>
+            <input type="text" id="Total" name="Total" required><br><br>
+
+            <input type="submit" value="Enviar">
+        </form>
+
+
+
+  <h2 style="text-align:center;">Lista de ventas</h2>
+  <table id="tablaVentas">
+    <thead>
+      <tr>
+        <th>Id venta</th>
+        <th>Fecha</th>
+        <th>Id cliente</th>
+        <th>Nombre Cliente</th>
+        <th>Id Producto</th>
+        <th>Descripcion Producto</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function cargarProductos() {
+      const res = await fetch('ventas.php');
+      const data = await res.json();
+
+      const tbody = document.querySelector('#tablaVentas tbody');
+      tbody.innerHTML = '';
+
+      data.forEach(p => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.idventas}</td>
+            <td>${p.Fecha}</td>
+            <td>${p.Id_cliente}</td>
+            <td>${p.NobreCliente}</td>
+            <td>${p.Id_producto}</td>
+            <td>${p.DescProducto}</td>
+            <td>${p.Cantidad}</td>
+            <td>$${p.Precio}</td>
+            <td>$${p.Total}</td>
+          </tr>`;
+      });
+    }
+
+    // Cargar cada 5 segundos (autoactualización)
+    setInterval(cargarProductos, 5000);
+    cargarProductos();
+  </script>
+  <button onclick="window.location.href='registroven.html'">Registra un dato</button>
+</body>
+</html>

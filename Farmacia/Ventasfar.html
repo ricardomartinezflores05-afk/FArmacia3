@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario de Productos</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('Farmacia.jpeg'),
+                  linear-gradient(135deg, #4a90e2, #50c9c3);
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
+
+      min-height: 100vh;
+      padding: 30px;
+      color: #000;
+    }
+
+    h1, h2 {
+      text-align: center;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+    }
+
+    /* FORMULARIO GLASS */
+    form {
+      width: 90%;
+      max-width: 650px;
+      margin: 25px auto;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.25);
+      animation: fadeIn 1s ease-out;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.6);
+      outline: none;
+    }
+
+    /* BOTONES GLASS */
+    .botones {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    input[type="submit"],
+    .btn-menu {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.75);
+      color: #083c5d;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+      text-align: center;
+      display: block;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    input[type="submit"]:hover,
+    .btn-menu:hover {
+      background: rgba(255,255,255,1);
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    /* TABLA GLASS */
+    table {
+      width: 95%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.15);
+      border-radius: 18px;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.25);
+      animation: fadeIn 1s ease-out;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    th {
+      background: rgba(0,0,0,0.35);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255,255,255,0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</head>
+<body>
+
+  <h1>🧾Registra tus Ventas</h1>
+
+  <form action="getReVentas.php" method="post">
+    
+    <label for="idVentas">Id Ventas:</label>
+    <input type="text" id="idVentas" name="idVentas" required>
+
+    <label for="id_empleados">Id Empleados:</label>
+    <input type="text" id="id_empleados" name="id_empleados" required>
+
+    <label for="id_Clientes">Id Clientes:</label>
+    <input type="text" id="id_Clientes" name="id_Clientes" required>
+
+    <label for="id_Productos">Id Productos:</label>
+    <input type="text" id="id_Productos" name="id_Productos" required>
+
+    <label for="Fecha_venta">Fecha venta:</label>
+    <input type="date" id="Fecha_venta" name="Fecha_venta" required>
+
+    <label for="Total">Total:</label>
+    <input type="text" id="Total" name="Total" required>
+
+    <label for="Metodo_pago">Método Pago:</label>
+    <input type="text" id="Metodo_pago" name="Metodo_pago" required>
+
+    <!-- BOTONES LADO A LADO -->
+    <div class="botones">
+      <input type="submit" value="Enviar">
+      <a href="menu.html" class="btn-menu">Menú</a>
+    </div>
+
+  </form>
+
+  <h2>📋Inventario de Ventas</h2>
+
+  <table id="tablaProductos">
+    <thead>
+      <tr>
+        <th>idVentas</th>
+        <th>id_empleados</th>
+        <th>id_Clientes</th>
+        <th>id_Productos</th>
+        <th>Fecha_venta</th>
+        <th>Total</th>
+        <th>Metodo_pago</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function cargarProductos() {
+      try {
+        const res = await fetch('getVentas.php');
+        const data = await res.json();
+
+        const tbody = document.querySelector('#tablaProductos tbody');
+        tbody.innerHTML = '';
+
+        if (Array.isArray(data)) {
+          data.forEach(p => {
+            tbody.innerHTML += `
+              <tr>
+                <td>${p.idVentas}</td>
+                <td>${p.id_empleados}</td>
+                <td>${p.id_Clientes}</td>
+                <td>${p.id_Productos}</td>
+                <td>${p.Fecha_venta}</td>
+                <td>${p.Total}</td>
+                <td>${p.Metodo_pago}</td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = `
+            <tr><td colspan="7">No hay productos</td></tr>
+          `;
+        }
+
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+      }
+    }
+
+    setInterval(cargarProductos, 5000);
+    cargarProductos();
+  </script>
+
+</body>
+</html>

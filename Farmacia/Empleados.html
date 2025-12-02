@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario de Productos</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('Farmacia.jpeg'),
+                  linear-gradient(135deg, #4a90e2, #50c9c3);
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
+
+      min-height: 100vh;
+      padding: 30px;
+      color: #000;
+    }
+
+    h1, h2 {
+      text-align: center;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+    }
+
+    /* FORMULARIO GLASS */
+    form {
+      width: 90%;
+      max-width: 650px;
+      margin: 25px auto;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.25);
+      animation: fadeIn 1s ease-out;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.6);
+      outline: none;
+    }
+
+    /* BOTONES GLASS */
+    .botones {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    input[type="submit"],
+    .btn-menu {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.75);
+      color: #083c5d;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+      text-align: center;
+      display: block;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    input[type="submit"]:hover,
+    .btn-menu:hover {
+      background: rgba(255,255,255,1);
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    /* TABLA GLASS */
+    table {
+      width: 95%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.15);
+      border-radius: 18px;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.25);
+      animation: fadeIn 1s ease-out;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    th {
+      background: rgba(0,0,0,0.35);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255,255,255,0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</head>
+<body>
+  <h1>💼Registra tus Empleados</h1>
+
+  <form action="getReEmpleados.php" method="post">
+
+    <label for="idempleados">Id Empleados:</label>
+    <input type="text" id="idempleados" name="idempleados" required><br><br>
+
+    <label for="Nombre">Nombre:</label>
+    <input type="text" id="Nombre" name="Nombre" required><br><br>
+
+    <label for="Telefono">Telefono:</label>
+    <input type="text" id="Telefono" name="Telefono" required><br><br>
+
+    <label for="Edad">Edad:</label>
+    <input type="text" id="Edad" name="Edad" required><br><br>
+
+    <label for="Puesto">Puesto:</label>
+    <input type="text" id="Puesto" name="Puesto" required><br><br>
+
+    <label for="Turno">Turno:</label>
+    <input type="text" id="Turno" name="Turno" required><br><br>
+
+    <!-- NUEVO: Botones -->
+    <div class="botones">
+      <input type="submit" value="Enviar">
+      <a href="menu.html" class="btn-menu">Menú</a>
+    </div>
+
+  </form>
+
+  <h2>📋Lista de Empleados</h2>
+
+  <table id="tablaProductos">
+    <thead>
+      <tr>
+        <th>idempleados</th>
+        <th>Nombre</th>
+        <th>Telefono</th>
+        <th>Edad</th>
+        <th>Puesto</th>
+        <th>Turno</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function cargarProductos() {
+      try {
+        const res = await fetch('getEmpleados.php');
+        const data = await res.json();
+
+        const tbody = document.querySelector('#tablaProductos tbody');
+        tbody.innerHTML = '';
+
+        if (Array.isArray(data)) {
+          data.forEach(p => {
+            tbody.innerHTML += `
+              <tr>
+                <td>${p.idempleados}</td>
+                <td>${p.Nombre}</td>
+                <td>${p.Telefono}</td>
+                <td>${p.Edad}</td>
+                <td>${p.Puesto}</td>
+                <td>${p.Turno}</td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="6">No hay empleados</td></tr>`;
+        }
+
+      } catch (error) {
+        console.error("Error al cargar empleados:", error);
+      }
+    }
+
+    setInterval(cargarProductos, 5000);
+    cargarProductos();
+  </script>
+
+</body>
+</html>
